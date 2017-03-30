@@ -19,11 +19,11 @@ import info.zthings.ht.test.tiles.TileField;
 
 public class ExampleGame extends ApplicationAdapter {
 	public Tile[][] map;
-	public RenderContextProvider g;
+	public RenderContextProvider contextProvider;
 	
 	@Override
 	public void create() {
-		g = new RenderContextProvider(new SpriteBatch(), new ShapeRenderer());
+		contextProvider = new RenderContextProvider(new SpriteBatch(), new ShapeRenderer());
 		
 		//JsonReader reader = new JsonReader();
 		//JsonValue json = reader.parse(Gdx.files.internal("testmap.json"));
@@ -33,38 +33,45 @@ public class ExampleGame extends ApplicationAdapter {
 		System.out.println("Map is ["+map.length+"x"+map[0].length+"]");
 		
 		HashMap<String, Class<? extends Tile>> tiletypes = new HashMap<>();
-		Reflections ref = new Reflections("info.zthings.ht");
-		for (Class<? extends Tile> c : ref.getSubTypesOf(Tile.class)) tiletypes.put(c.getSimpleName().toLowerCase(), c);
+		Reflections reflections = new Reflections("info.zthings.ht");
+		for (Class<? extends Tile> reflectionClass : reflections.getSubTypesOf(Tile.class)) tiletypes.put(reflectionClass.getSimpleName().toLowerCase(), reflectionClass);
 
-		for (String k : json.keySet()) {
-			if (k == "width" || k == "height" || k == "version") continue;
+		for (String key : json.keySet()) {
+			if (key.equals("width") || key.equals("height") || key.equals("version")) continue;
 			try {
-				Constructor<? extends Tile> c = tiletypes.get(k).getConstructor(JSONObject.class);
-				for (Object obj : json.getJSONArray(k)) {
-					JSONObject jobj = (JSONObject)obj;
-					if (TileField.class.isAssignableFrom(tiletypes.get(k))) {
-						System.out.println(jobj.getInt("x2"));
-						System.out.println(jobj.getInt("x2"));
-						System.out.println(jobj.getInt("x2"));
-						System.out.println(5<=jobj.getInt("x2"));
-						for (int y=jobj.getInt("y1"); y<=jobj.getInt("y2"); y++)
-						for (int x=jobj.getInt("x1"); x<=jobj.getInt("x2"); x++) {
-							JSONObject jobj2 = jobj;
-							jobj2.remove("x1");
-							jobj2.remove("x2");
-							jobj2.remove("y1");
-							jobj2.remove("y2");
-							jobj2.put("x", x);
-							jobj2.put("y", y);
-							
-							map[y][x] = c.newInstance(jobj);
+				Constructor<? extends Tile> constructor = tiletypes.get(key).getConstructor(JSONObject.class);
+				for (Object obj : json.getJSONArray(key)) {
+					JSONObject objectOne = (JSONObject) obj;
+					if (TileField.class.isAssignableFrom(tiletypes.get(key))) {
+						boolean numberedX = objectOne.keySet().contains("x1"); //TODO Maybe find the class and load it per-class instead of this
+						System.out.println("Numbered coordinate setting is " + numberedX);
+
+						if (numberedX) {
+							System.out.println("x1 = " + objectOne.getInt("x1"));
+							System.out.println("y1 = " + objectOne.getInt("y1"));
+							System.out.println("x2 = " + objectOne.getInt("x2"));
+							System.out.println("y2 = " + objectOne.getInt("y2"));
+							for (int yCoordinate = objectOne.getInt("y1"); yCoordinate <= objectOne.getInt("y2"); yCoordinate++) {
+								for (int xCoordinate = objectOne.getInt("x1"); xCoordinate <= objectOne.getInt("x2"); xCoordinate++) {
+									JSONObject objectToInsert = new JSONObject();//objectOne;
+									objectToInsert.put("x", xCoordinate);
+									objectToInsert.put("y", yCoordinate);
+
+									map[yCoordinate][xCoordinate] = constructor.newInstance(objectToInsert);
+								}
+							}
+						} else {
+							System.out.println("x = " + objectOne.getInt("x"));
+							System.out.println("y = " + objectOne.getInt("y"));
+							map[objectOne.getInt("y")][objectOne.getInt("x")] = constructor.newInstance(objectOne);
 						}
-					} else map[jobj.getInt("y")][jobj.getInt("x")] = c.newInstance(jobj);
+
+					} else map[objectOne.getInt("y")][objectOne.getInt("x")] = constructor.newInstance(objectOne);
 				}
-			} catch (NullPointerException e) {throw new IllegalArgumentException("Unknown tile class '"+k+"'", e);}
-			  catch (ClassCastException e) {throw new IllegalArgumentException("Invalid JSON-format, "+k+"-array does contain a non-object value", e);}
-			  catch (JSONException e) {throw new IllegalArgumentException("Invalid JSON-format, no x or y value at: "+k, e);}
-			  catch (ReflectiveOperationException e) {throw new IllegalArgumentException("Invalid Tile-implementation '"+k+"'", e);}
+			} catch (NullPointerException e) {throw new IllegalArgumentException("Unknown tile class '"+key+"'", e);}
+			  catch (ClassCastException e) {throw new IllegalArgumentException("Invalid JSON-format, "+key+"-array does contain a non-object value", e);}
+			  catch (JSONException e) {throw new IllegalArgumentException("Invalid JSON-format, no x or y value at: "+key, e);}
+			  catch (ReflectiveOperationException e) {throw new IllegalArgumentException("Invalid Tile-implementation '"+key+"'", e);}
 			  catch (ArrayIndexOutOfBoundsException e) {throw new IllegalArgumentException("This does not compute :O", e);}
 		}
 	}
@@ -77,17 +84,22 @@ public class ExampleGame extends ApplicationAdapter {
 		int ssize = 100; //TODO should be in ui
 		
 		for (int y=0; y<map.length; y++) for (int x=0; x<map[y].length; x++) {
-			map[x][y].debugRender(g, x*ssize, y*ssize, ssize);
+		    if (map[x][y] == null) {
+		        //Nothing at this location
+		        continue;
+            }
+			map[x][y].debugRender(contextProvider, x*ssize, y*ssize, ssize);
 			
-			g.sr.begin(ShapeType.Filled);
-			g.sr.setColor(map[x][y].getDebugCol());
-			g.sr.rect(x*ssize, y*ssize, ssize, ssize);
+			contextProvider.spriteRenderer.begin(ShapeType.Filled);
+			contextProvider.spriteRenderer.setColor(map[x][y].getDebugCol());
+			contextProvider.spriteRenderer.rect(x*ssize, y*ssize, ssize, ssize);
+			contextProvider.spriteRenderer.end();
 		}
 	}
 	
 	@Override
 	public void dispose() {
-		g.dispose();
+		contextProvider.dispose();
 	}
 	
 }

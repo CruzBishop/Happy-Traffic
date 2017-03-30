@@ -5,18 +5,18 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Disposable;
 
 public class RenderContextProvider implements Disposable {
-	public SpriteBatch sb;
-	public ShapeRenderer sr;
+	public SpriteBatch spriteBatch;
+	public ShapeRenderer spriteRenderer;
 	
-	public RenderContextProvider(SpriteBatch sb, ShapeRenderer sr) {
-		this.sb = sb;
-		this.sr = sr;
+	public RenderContextProvider(SpriteBatch spriteBatch, ShapeRenderer sr) {
+		this.spriteBatch = spriteBatch;
+		this.spriteRenderer = sr;
 	}
 	
 	@Override
 	public void dispose() {
-		sb.dispose();
-		sr.dispose();
+		spriteBatch.dispose();
+		spriteRenderer.dispose();
 	}
 	
 }

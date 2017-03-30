@@ -15,7 +15,7 @@ public class Road implements TileField {
 	@Override
 	public Color getDebugCol() {
 		//STUB
-		return null;
+		return Color.GRAY;
 	}
 	
 	@Override
