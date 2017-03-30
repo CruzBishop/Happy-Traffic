@@ -1,0 +1,70 @@
+apply plugin: 'java'
+configurations.all { resolutionStrategy.cacheChangingModulesFor 0, 'seconds' }
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        jcenter()
+    }
+}
+
+version = '1.0'
+ext {
+	appName = "HappyTraffic"
+	gdxVersion = '1.9.6'
+	roboVMVersion = '2.3.0'
+	box2DLightsVersion = '1.4'
+	ashleyVersion = '1.7.0'
+	aiVersion = '1.8.0'
+	mainClassName = "info.zthings.ht.Launch"
+	//assetsDir = new File("../core/assets");
+}
+
+apply plugin: "java"
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+	jcenter()
+	
+	maven { url 'https://jitpack.io' }
+	maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+	maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+}
+
+dependencies {
+	compile ('com.github.HoldYourWaffle:GUtil:-SNAPSHOT') { changing = true }
+	
+	compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+	compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+	compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+	compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+	compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+	compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+	compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+	compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
+	compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+	compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+	compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
+}
+
+jar {
+	//from files(sourceSets.main.output.classesDir)
+    //from files(sourceSets.main.output.resourcesDir)
+    //from files(project.assetsDir);
+	
+	from {configurations.compile.collect {zipTree(it)}}
+	manifest { attributes 'Main-Class': mainClassName }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+artifacts { archives sourcesJar }
