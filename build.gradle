@@ -1,4 +1,6 @@
 apply plugin: 'java'
+apply plugin: 'com.autoscout24.gradle.todo'
+
 configurations.all { resolutionStrategy.cacheChangingModulesFor 0, 'seconds' }
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
@@ -9,7 +11,22 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         jcenter()
     }
+    dependencies {
+    	classpath 'com.autoscout24.gradle:gradle-todo-plugin:1.0'
+		classpath 'commons-io:commons-io:2.0.1'
+    }
 }
+
+todo {
+	teamCityLog = false
+	todoPattern = "//[\\t\\s]*(NOW|STUB|CHECK|TODO|FIXME)(.*)"
+	//todoPattern = "//[\\t\\s]*TODO(.*)"
+	todoSuffixPattern = ''
+	failIfFound = false
+	sourceFolder = "src/main/java"
+	fileExtensions = ["java"]
+}
+classes.dependsOn checkTodo
 
 version = '1.0'
 ext {
@@ -23,8 +40,6 @@ ext {
 	//assetsDir = new File("../core/assets");
 }
 
-apply plugin: "java"
-
 repositories {
 	mavenLocal()
 	mavenCentral()
@@ -37,6 +52,9 @@ repositories {
 
 dependencies {
 	compile ('com.github.HoldYourWaffle:GUtil:-SNAPSHOT') { changing = true }
+	compile "org.reflections:reflections:0.9.11"
+	compile "org.json:json:20160810"
+
 	
 	compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
 	compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
