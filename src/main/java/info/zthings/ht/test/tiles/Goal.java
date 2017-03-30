@@ -15,7 +15,7 @@ public class Goal implements Tile {
 	@Override
 	public Color getDebugCol() {
 		//STUB
-		return null;
+		return Color.CHARTREUSE;
 	}
 	
 	@Override

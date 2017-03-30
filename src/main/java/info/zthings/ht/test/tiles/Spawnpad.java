@@ -15,7 +15,7 @@ public class Spawnpad implements Tile {
 	@Override
 	public Color getDebugCol() {
 		//STUB
-		return null;
+		return Color.GOLD;
 	}
 	
 	@Override
