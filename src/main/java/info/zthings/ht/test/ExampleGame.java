@@ -26,6 +26,7 @@ public class ExampleGame extends ApplicationAdapter {
 	@Override
 	public void create() {
 		contextProvider = new RenderContextProvider(new SpriteBatch(), new ShapeRenderer());
+		Gdx.graphics.setResizable(false);
 		
 		//JsonReader reader = new JsonReader();
 		//JsonValue json = reader.parse(Gdx.files.internal("testmap.json"));
