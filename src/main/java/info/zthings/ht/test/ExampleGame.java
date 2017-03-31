@@ -19,6 +19,8 @@ import info.zthings.ht.test.tiles.TileField;
 
 public class ExampleGame extends ApplicationAdapter {
 	public Tile[][] map;
+	public int height;
+	public int width;
 	public RenderContextProvider contextProvider;
 	
 	@Override
@@ -29,7 +31,9 @@ public class ExampleGame extends ApplicationAdapter {
 		//JsonValue json = reader.parse(Gdx.files.internal("testmap.json"));
 		JSONObject json = new JSONObject(Gdx.files.internal("testmap.json").readString());
 		System.out.println("Reading map with version: "+json.getInt("version"));
-		map = new Tile[json.getInt("height")][json.getInt("width")];
+		height = json.getInt("height");
+		width = json.getInt("width");
+		map = new Tile[height][width];
 		System.out.println("Map is ["+map.length+"x"+map[0].length+"]");
 		
 		HashMap<String, Class<? extends Tile>> tiletypes = new HashMap<>();
@@ -80,19 +84,20 @@ public class ExampleGame extends ApplicationAdapter {
 	public void render() {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
-		int ssize = 100; //TODO should be in ui
+
+        int screenWidth = Gdx.graphics.getBackBufferWidth() / width;
+        int screenHeight = Gdx.graphics.getBackBufferHeight() / height;
 		
 		for (int y=0; y<map.length; y++) for (int x=0; x<map[y].length; x++) {
 		    if (map[x][y] == null) {
 		        //Nothing at this location
 		        continue;
             }
-			map[x][y].debugRender(contextProvider, x*ssize, y*ssize, ssize);
+			map[x][y].debugRender(contextProvider, x*screenWidth, y*screenHeight, screenWidth, screenHeight);
 			
 			contextProvider.spriteRenderer.begin(ShapeType.Filled);
 			contextProvider.spriteRenderer.setColor(map[x][y].getDebugCol());
-			contextProvider.spriteRenderer.rect(x*ssize, y*ssize, ssize, ssize);
+			contextProvider.spriteRenderer.rect(x*screenWidth, y*screenHeight, screenWidth, screenHeight);
 			contextProvider.spriteRenderer.end();
 		}
 	}

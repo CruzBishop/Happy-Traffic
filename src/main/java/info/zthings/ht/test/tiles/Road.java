@@ -19,7 +19,7 @@ public class Road implements TileField {
 	}
 	
 	@Override
-	public void debugRender(RenderContextProvider g, int x, int y, int ssize) {
+	public void debugRender(RenderContextProvider g, int x, int y, int screenWidth, int screenHeight) {
 		//STUB
 		
 	}
