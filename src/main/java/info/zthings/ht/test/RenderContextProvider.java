@@ -10,9 +10,9 @@ public class RenderContextProvider implements Disposable {
 	public ShapeRenderer shapeRenderer;
 	public BitmapFont font;
 	
-	public RenderContextProvider(SpriteBatch spriteBatch, ShapeRenderer sr) {
+	public RenderContextProvider(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
 		this.spriteBatch = spriteBatch;
-		this.shapeRenderer = sr;
+		this.shapeRenderer = shapeRenderer;
 		this.font = new BitmapFont();
 	}
 	
