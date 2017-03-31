@@ -1,22 +1,26 @@
 package info.zthings.ht.test;
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Disposable;
 
 public class RenderContextProvider implements Disposable {
 	public SpriteBatch spriteBatch;
-	public ShapeRenderer spriteRenderer;
+	public ShapeRenderer shapeRenderer;
+	public BitmapFont font;
 	
 	public RenderContextProvider(SpriteBatch spriteBatch, ShapeRenderer sr) {
 		this.spriteBatch = spriteBatch;
-		this.spriteRenderer = sr;
+		this.shapeRenderer = sr;
+		this.font = new BitmapFont();
 	}
 	
 	@Override
 	public void dispose() {
 		spriteBatch.dispose();
-		spriteRenderer.dispose();
+		shapeRenderer.dispose();
+		font.dispose();
 	}
 	
 }
