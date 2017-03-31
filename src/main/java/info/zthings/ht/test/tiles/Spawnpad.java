@@ -19,7 +19,7 @@ public class Spawnpad implements Tile {
 	}
 	
 	@Override
-	public void debugRender(RenderContextProvider g, int x, int y, int ssize) {
+	public void debugRender(RenderContextProvider g, int x, int y, int screenWidth, int screenHeight) {
 		//STUB
 		
 	}
