@@ -85,19 +85,19 @@ public class ExampleGame extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        int screenWidth = Gdx.graphics.getBackBufferWidth() / width;
-        int screenHeight = Gdx.graphics.getBackBufferHeight() / height;
+        int tileWidth = Gdx.graphics.getBackBufferWidth() / width;
+        int tileHeight = Gdx.graphics.getBackBufferHeight() / height;
 		
 		for (int y=0; y<map.length; y++) for (int x=0; x<map[y].length; x++) {
 		    if (map[x][y] == null) {
 		        //Nothing at this location
 		        continue;
             }
-			map[x][y].debugRender(contextProvider, x*screenWidth, y*screenHeight, screenWidth, screenHeight);
+			map[x][y].debugRender(contextProvider, x*tileWidth, y*tileHeight, tileWidth, tileHeight);
 			
 			contextProvider.spriteRenderer.begin(ShapeType.Filled);
 			contextProvider.spriteRenderer.setColor(map[x][y].getDebugCol());
-			contextProvider.spriteRenderer.rect(x*screenWidth, y*screenHeight, screenWidth, screenHeight);
+			contextProvider.spriteRenderer.rect(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
 			contextProvider.spriteRenderer.end();
 		}
 	}
